@@ -2,17 +2,15 @@ package ch.hevs.aislab.demo.database.entity;
 
 import android.support.annotation.NonNull;
 
+import com.google.firebase.database.Exclude;
+
 import ch.hevs.aislab.demo.model.Client;
 
 public class ClientEntity implements Client, Comparable {
-
-    @NonNull
+    private String id;
     private String email;
-
     private String firstName;
-
     private String lastName;
-
     private String password;
 
     public ClientEntity() {
@@ -32,7 +30,16 @@ public class ClientEntity implements Client, Comparable {
         this.password = password;
     }
 
-    @NonNull
+    @Exclude
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String getEmail() {
         return email;
@@ -60,6 +67,7 @@ public class ClientEntity implements Client, Comparable {
         this.lastName = lastName;
     }
 
+    @Exclude
     @Override
     public String getPassword() {
         return password;

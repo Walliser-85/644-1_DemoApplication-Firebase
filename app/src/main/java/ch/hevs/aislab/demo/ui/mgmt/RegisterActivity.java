@@ -9,9 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ch.hevs.aislab.demo.BaseApp;
 import ch.hevs.aislab.demo.R;
-import ch.hevs.aislab.demo.database.async.client.CreateClient;
 import ch.hevs.aislab.demo.database.entity.ClientEntity;
+import ch.hevs.aislab.demo.database.repository.ClientRepository;
 import ch.hevs.aislab.demo.ui.BaseActivity;
 import ch.hevs.aislab.demo.ui.MainActivity;
 import ch.hevs.aislab.demo.util.OnAsyncEventListener;
@@ -19,6 +20,8 @@ import ch.hevs.aislab.demo.util.OnAsyncEventListener;
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
+
+    private ClientRepository mRepository;
 
     private Toast mToast;
 
@@ -32,7 +35,10 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        mRepository = ((BaseApp) getApplication()).getClientRepository();
+
         initializeForm();
+
         mToast = Toast.makeText(this, getString(R.string.client_created), Toast.LENGTH_LONG);
     }
 
@@ -67,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         ClientEntity newClient = new ClientEntity(email, firstName, lastName, pwd);
 
-        new CreateClient(getApplication(), new OnAsyncEventListener() {
+        mRepository.register(newClient, new OnAsyncEventListener() {
             @Override
             public void onSuccess(Object object) {
                 Log.d(TAG, "createUserWithEmail: success");
@@ -79,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Log.d(TAG, "createUserWithEmail: failure", e);
                 setResponse(false);
             }
-        }).execute(newClient);
+        });
     }
 
     private void setResponse(Boolean response) {

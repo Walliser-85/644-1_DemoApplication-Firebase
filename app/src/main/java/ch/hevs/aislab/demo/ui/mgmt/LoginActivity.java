@@ -1,7 +1,6 @@
 package ch.hevs.aislab.demo.ui.mgmt;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -114,31 +113,18 @@ public class LoginActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             mProgressBar.setVisibility(View.VISIBLE);
-            mRepository.getClient(email).observe(LoginActivity.this, clientEntity -> {
-                if (clientEntity != null) {
-                    if (clientEntity.getPassword().equals(password)) {
-                        // We need an Editor object to make preference changes.
-                        // All objects are from android.context.Context
-                        SharedPreferences.Editor editor = getSharedPreferences(BaseActivity.PREFS_NAME, 0).edit();
-                        editor.putString(BaseActivity.PREFS_USER, clientEntity.getEmail());
-                        editor.apply();
-
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        mEmailView.setText("");
-                        mPasswordView.setText("");
-                    } else {
-                        mPasswordView.setError(getString(R.string.error_incorrect_password));
-                        mPasswordView.requestFocus();
-                        mPasswordView.setText("");
-                    }
-                    mProgressBar.setVisibility(View.GONE);
+            mRepository.signIn(email, password, task -> {
+                if (task.isSuccessful()) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    mEmailView.setText("");
+                    mPasswordView.setText("");
                 } else {
                     mEmailView.setError(getString(R.string.error_invalid_email));
                     mEmailView.requestFocus();
                     mPasswordView.setText("");
-                    mProgressBar.setVisibility(View.GONE);
                 }
+                mProgressBar.setVisibility(View.GONE);
             });
         }
     }

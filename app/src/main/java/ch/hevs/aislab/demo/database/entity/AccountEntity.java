@@ -1,9 +1,11 @@
 package ch.hevs.aislab.demo.database.entity;
 
+import com.google.firebase.database.Exclude;
+
 import ch.hevs.aislab.demo.model.Account;
 
 public class AccountEntity implements Account {
-    private Long id;
+    private String id;
     private String name;
     private Double balance;
     private String owner;
@@ -18,12 +20,13 @@ public class AccountEntity implements Account {
         owner = account.getOwner();
     }
 
+    @Exclude
     @Override
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
