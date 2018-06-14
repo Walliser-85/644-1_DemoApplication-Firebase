@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import ch.hevs.aislab.demo.R;
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.ui.BaseActivity;
@@ -30,8 +32,7 @@ public class EditAccountActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_edit_account, frameLayout);
 
-        SharedPreferences settings = getSharedPreferences(BaseActivity.PREFS_NAME, 0);
-        mOwner = settings.getString(BaseActivity.PREFS_USER, null);
+        mOwner = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         mEtAccountName = findViewById(R.id.accountName);
         mEtAccountName.requestFocus();

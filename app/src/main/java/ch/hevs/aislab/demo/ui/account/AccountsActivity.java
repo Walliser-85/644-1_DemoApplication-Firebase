@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,9 +60,6 @@ public class AccountsActivity extends BaseActivity {
                 LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        SharedPreferences settings = getSharedPreferences(BaseActivity.PREFS_NAME, 0);
-        String user = settings.getString(BaseActivity.PREFS_USER, null);
-
         mAccounts = new ArrayList<>();
         mAdapter = new RecyclerAdapter<>(new RecyclerViewItemClickListener() {
             @Override
@@ -88,7 +87,7 @@ public class AccountsActivity extends BaseActivity {
         );
 
         AccountListViewModel.Factory factory = new AccountListViewModel.Factory(
-                getApplication(), user);
+                getApplication(), FirebaseAuth.getInstance().getCurrentUser().getUid());
         mViewModel = ViewModelProviders.of(this, factory).get(AccountListViewModel.class);
         mViewModel.getOwnAccounts().observe(this, accountEntities -> {
             if (accountEntities != null) {
