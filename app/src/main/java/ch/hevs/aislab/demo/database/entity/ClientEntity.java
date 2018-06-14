@@ -1,29 +1,16 @@
 package ch.hevs.aislab.demo.database.entity;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
 import android.support.annotation.NonNull;
 
 import ch.hevs.aislab.demo.model.Client;
 
-/**
- * https://developer.android.com/reference/android/arch/persistence/room/Entity.html
- *
- * Further information to Parcelable:
- * https://developer.android.com/reference/android/os/Parcelable
- * Why we use Parcelable over Serializable:
- * https://android.jlelse.eu/parcelable-vs-serializable-6a2556d51538
- */
-@Entity(tableName = "clients", primaryKeys = {"email"})
 public class ClientEntity implements Client, Comparable {
 
     @NonNull
     private String email;
 
-    @ColumnInfo(name = "first_name")
     private String firstName;
 
-    @ColumnInfo(name = "last_name")
     private String lastName;
 
     private String password;

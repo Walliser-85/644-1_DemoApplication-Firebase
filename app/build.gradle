@@ -39,10 +39,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     // Android Architecture Components
-    implementation "android.arch.lifecycle:extensions:$arc_comp_lifecycle_version"
-    implementation "android.arch.persistence.room:runtime:$arc_comp_version"
-    annotationProcessor "android.arch.lifecycle:compiler:$arc_comp_version"
-    annotationProcessor "android.arch.persistence.room:compiler:$arc_comp_version"
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
     // Firebase Dependencies
     implementation 'com.google.firebase:firebase-core:16.0.0'
     implementation 'com.google.firebase:firebase-auth:16.0.1'

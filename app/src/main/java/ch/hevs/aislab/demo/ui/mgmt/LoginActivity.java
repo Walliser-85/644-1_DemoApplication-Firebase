@@ -15,13 +15,10 @@ import android.widget.Toast;
 
 import ch.hevs.aislab.demo.BaseApp;
 import ch.hevs.aislab.demo.R;
-import ch.hevs.aislab.demo.database.AppDatabase;
 import ch.hevs.aislab.demo.database.repository.ClientRepository;
 import ch.hevs.aislab.demo.ui.BaseActivity;
 import ch.hevs.aislab.demo.ui.MainActivity;
 import ch.hevs.aislab.demo.util.LocaleManager;
-
-import static ch.hevs.aislab.demo.database.AppDatabase.initializeDemoData;
 
 /**
  * A login screen that offers login via email/password.
@@ -155,7 +152,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void reinitializeDatabase() {
-        initializeDemoData(AppDatabase.getInstance(this));
+        //TODO: Implement this using Firebase.
+        //initializeDemoData(AppDatabase.getInstance(this));
         Toast.makeText(this, getString(R.string.demo_data_initiated), Toast.LENGTH_LONG).show();
     }
 }

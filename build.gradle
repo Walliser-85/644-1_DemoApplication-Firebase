@@ -13,8 +13,6 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
-    ext.arc_comp_version = '1.0.0'
-    ext.arc_comp_lifecycle_version = '1.1.1'
 }
 
 allprojects {

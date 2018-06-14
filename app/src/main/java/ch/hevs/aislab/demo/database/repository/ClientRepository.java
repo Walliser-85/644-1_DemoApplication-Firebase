@@ -4,25 +4,17 @@ import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
-import ch.hevs.aislab.demo.database.AppDatabase;
 import ch.hevs.aislab.demo.database.entity.ClientEntity;
-import ch.hevs.aislab.demo.database.pojo.ClientAccounts;
 
 public class ClientRepository {
 
     private static ClientRepository sInstance;
 
-    private final AppDatabase mDatabase;
-
-    private ClientRepository(final AppDatabase database) {
-        mDatabase = database;
-    }
-
-    public static ClientRepository getInstance(final AppDatabase database) {
+    public static ClientRepository getInstance() {
         if (sInstance == null) {
             synchronized (AccountRepository.class) {
                 if (sInstance == null) {
-                    sInstance = new ClientRepository(database);
+                    sInstance = new ClientRepository();
                 }
             }
         }
@@ -30,22 +22,25 @@ public class ClientRepository {
     }
 
     public LiveData<ClientEntity> getClient(final String clientId) {
-        return mDatabase.clientDao().getById(clientId);
+        //TODO: Implement this using Firebase.
+        return null;
     }
 
-    public LiveData<List<ClientAccounts>> getOtherClientsWithAccounts(final String owner) {
-        return mDatabase.clientDao().getOtherClientsWithAccounts(owner);
-    }
+    /*    TODO: Rework this for firebase
+    public LiveData<List<ClientWithAccounts>> getOtherClientsWithAccounts(final String owner) {
+        //TODO: Implement this using Firebase.
+        return null;
+    }*/
 
     public void insert(final ClientEntity client) {
-        mDatabase.clientDao().insert(client);
+        //TODO: Implement this using Firebase.
     }
 
     public void update(final ClientEntity client) {
-        mDatabase.clientDao().update(client);
+        //TODO: Implement this using Firebase.
     }
 
     public void delete(final ClientEntity client) {
-        mDatabase.clientDao().delete(client);
+        //TODO: Implement this using Firebase.
     }
 }

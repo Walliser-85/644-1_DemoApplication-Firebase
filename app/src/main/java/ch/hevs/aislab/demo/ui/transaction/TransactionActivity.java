@@ -22,7 +22,6 @@ import ch.hevs.aislab.demo.R;
 import ch.hevs.aislab.demo.adapter.ListAdapter;
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.database.entity.ClientEntity;
-import ch.hevs.aislab.demo.database.pojo.ClientAccounts;
 import ch.hevs.aislab.demo.ui.BaseActivity;
 import ch.hevs.aislab.demo.viewmodel.account.AccountListViewModel;
 
@@ -87,24 +86,26 @@ public class TransactionActivity extends BaseActivity {
             }
         });
 
-        mViewModel.getClientAccounts().observe(this, clientAccounts -> {
+        //TODO: Implement this using Firebase.
+        /*mViewModel.getClientAccounts().observe(this, clientAccounts -> {
             if (clientAccounts != null) {
                 setupMap(clientAccounts);
             }
-        });
+        });*/
     }
 
     /*
     This is reinitializing the data for ToClient and ToAccount every time there are changes
     coming from the ViewModel.
      */
-    private void setupMap(List<ClientAccounts> clientAccounts) {
+    //TODO: Implement this using Firebase.
+    /*private void setupMap(List<ClientAccounts> clientAccounts) {
         mClientEntityMultimap = new TreeMap<>();
         for (ClientAccounts cA : clientAccounts) {
             mClientEntityMultimap.put(cA.client, cA.accounts);
         }
         setupToClientSpinner();
-    }
+    }*/
 
     private void setupFromAccSpinner() {
         mSpinnerFromAccount = findViewById(R.id.spinner_from);
