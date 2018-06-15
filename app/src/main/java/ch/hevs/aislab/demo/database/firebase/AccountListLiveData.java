@@ -21,6 +21,7 @@ public class AccountListLiveData extends LiveData<List<AccountEntity>> {
     private static final String TAG = "AccountListLiveData";
 
     private final Query mQuery;
+    private final String mOwner;
     private final MyValueEventListener mListener = new MyValueEventListener();
 
     /**
@@ -39,12 +40,14 @@ public class AccountListLiveData extends LiveData<List<AccountEntity>> {
         }
     };
 
-    public AccountListLiveData(Query query) {
-        this.mQuery = query;
+    public AccountListLiveData(Query query, String owner) {
+        mQuery = query;
+        mOwner = owner;
     }
 
-    public AccountListLiveData(DatabaseReference ref) {
-        this.mQuery = ref;
+    public AccountListLiveData(DatabaseReference ref, String owner) {
+        mQuery = ref;
+        mOwner = owner;
     }
 
     @Override
@@ -78,12 +81,11 @@ public class AccountListLiveData extends LiveData<List<AccountEntity>> {
     }
 
     private List<AccountEntity> toAccounts(DataSnapshot snapshot) {
-        String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
         List<AccountEntity> accounts = new ArrayList<>();
         for (DataSnapshot childSnapshot : snapshot.getChildren()) {
             AccountEntity entity = childSnapshot.getValue(AccountEntity.class);
             entity.setId(childSnapshot.getKey());
-            entity.setOwner(user);
+            entity.setOwner(mOwner);
             accounts.add(entity);
         }
         return accounts;

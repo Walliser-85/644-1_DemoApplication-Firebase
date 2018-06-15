@@ -7,14 +7,12 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
-import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import ch.hevs.aislab.demo.BaseApp;
-import ch.hevs.aislab.demo.database.async.account.CreateAccount;
-import ch.hevs.aislab.demo.database.async.account.UpdateAccount;
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.database.repository.AccountRepository;
-import ch.hevs.aislab.demo.util.OnAsyncEventListener;
 
 public class AccountViewModel  extends AndroidViewModel {
 
@@ -26,7 +24,7 @@ public class AccountViewModel  extends AndroidViewModel {
     private final MediatorLiveData<AccountEntity> mObservableAccount;
 
     public AccountViewModel(@NonNull Application application,
-                                   final Long accountId, AccountRepository accountRepository) {
+                                   final String accountId, AccountRepository accountRepository) {
         super(application);
 
         mRepository = accountRepository;
@@ -35,7 +33,7 @@ public class AccountViewModel  extends AndroidViewModel {
         // set by default null, until we get data from the database.
         mObservableAccount.setValue(null);
 
-        LiveData<AccountEntity> account = mRepository.getAccount(accountId);
+        LiveData<AccountEntity> account = mRepository.getAccount(accountId, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         // observe the changes of the account entity from the database and forward them
         mObservableAccount.addSource(account, mObservableAccount::setValue);
@@ -49,11 +47,11 @@ public class AccountViewModel  extends AndroidViewModel {
         @NonNull
         private final Application mApplication;
 
-        private final Long mAccountId;
+        private final String mAccountId;
 
         private final AccountRepository mRepository;
 
-        public Factory(@NonNull Application application, Long accountId) {
+        public Factory(@NonNull Application application, String accountId) {
             mApplication = application;
             mAccountId = accountId;
             mRepository = ((BaseApp) application).getAccountRepository();
@@ -74,30 +72,12 @@ public class AccountViewModel  extends AndroidViewModel {
     }
 
     public void createAccount(AccountEntity account) {
-        new CreateAccount(getApplication(), new OnAsyncEventListener() {
-            @Override
-            public void onSuccess(Object object) {
-                Log.d(TAG, "createAccount: success");
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.d(TAG, "createAccount: failure", e);
-            }
-        }).execute(account);
+        ((BaseApp) getApplication()).getAccountRepository()
+                .insert(account);
     }
 
     public void updateAccount(AccountEntity account) {
-        new UpdateAccount(getApplication(), new OnAsyncEventListener() {
-            @Override
-            public void onSuccess(Object object) {
-                Log.d(TAG, "updateAccount: success");
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.d(TAG, "updateAccount: failure", e);
-            }
-        }).execute(account);
+        ((BaseApp) getApplication()).getAccountRepository()
+                .update(account);
     }
 }

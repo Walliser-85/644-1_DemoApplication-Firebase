@@ -17,6 +17,7 @@ public class AccountLiveData extends LiveData<AccountEntity> {
     private static final String TAG = "AccountLiveData";
 
     private final Query mQuery;
+    private final String mOwner;
     private final AccountLiveData.MyValueEventListener mListener = new AccountLiveData.MyValueEventListener();
 
     /**
@@ -35,12 +36,14 @@ public class AccountLiveData extends LiveData<AccountEntity> {
         }
     };
 
-    public AccountLiveData(Query query) {
-        this.mQuery = query;
+    public AccountLiveData(Query query, String owner) {
+        mQuery = query;
+        mOwner = owner;
     }
 
-    public AccountLiveData(DatabaseReference ref) {
-        this.mQuery = ref;
+    public AccountLiveData(DatabaseReference ref, String owner) {
+        mQuery = ref;
+        mOwner = owner;
     }
 
     @Override
@@ -64,7 +67,10 @@ public class AccountLiveData extends LiveData<AccountEntity> {
     private class MyValueEventListener implements ValueEventListener {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            setValue(dataSnapshot.getValue(AccountEntity.class));
+            AccountEntity entity = dataSnapshot.getValue(AccountEntity.class);
+            entity.setId(dataSnapshot.getKey());
+            entity.setOwner(mOwner);
+            setValue(entity);
         }
 
         @Override

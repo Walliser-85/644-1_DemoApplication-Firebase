@@ -13,7 +13,6 @@ import android.util.Pair;
 import java.util.List;
 
 import ch.hevs.aislab.demo.BaseApp;
-import ch.hevs.aislab.demo.database.async.account.DeleteAccount;
 import ch.hevs.aislab.demo.database.async.account.Transaction;
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.database.repository.AccountRepository;
@@ -99,17 +98,8 @@ public class AccountListViewModel extends AndroidViewModel {
     }
 
     public void deleteAccount(AccountEntity account) {
-        new DeleteAccount(getApplication(), new OnAsyncEventListener() {
-            @Override
-            public void onSuccess(Object object) {
-                Log.d(TAG, "deleteAccount: success");
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.d(TAG, "deleteAccount: failure", e);
-            }
-        }).execute(account);
+        ((BaseApp) getApplication()).getAccountRepository()
+                .delete(account);
     }
 
     public void executeTransaction(final AccountEntity sender, final AccountEntity recipient) {

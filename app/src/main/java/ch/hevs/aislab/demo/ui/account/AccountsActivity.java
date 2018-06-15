@@ -32,7 +32,7 @@ import ch.hevs.aislab.demo.viewmodel.account.AccountListViewModel;
 
 public class AccountsActivity extends BaseActivity {
 
-    private static final String TAG = "ClientsFragment";
+    private static final String TAG = "AccountsActivity";
 
     private List<AccountEntity> mAccounts;
     private RecyclerAdapter<AccountEntity> mAdapter;

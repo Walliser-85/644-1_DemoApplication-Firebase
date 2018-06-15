@@ -1,7 +1,6 @@
 package ch.hevs.aislab.demo.ui.account;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,8 +42,8 @@ public class EditAccountActivity extends BaseActivity {
             mToast.show();
         });
 
-        Long accountId = getIntent().getLongExtra("accountId", 0L);
-        if (accountId == 0L) {
+        String accountId = getIntent().getStringExtra("accountId");
+        if (accountId == null) {
             setTitle(getString(R.string.title_activity_create_account));
             mToast = Toast.makeText(this, getString(R.string.account_created), Toast.LENGTH_LONG);
             mEditMode = false;

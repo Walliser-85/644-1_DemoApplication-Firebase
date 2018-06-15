@@ -4,6 +4,9 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ch.hevs.aislab.demo.model.Client;
 
 public class ClientEntity implements Client, Comparable {
@@ -94,5 +97,15 @@ public class ClientEntity implements Client, Comparable {
     @Override
     public int compareTo(@NonNull Object o) {
         return toString().compareTo(o.toString());
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("firstName", firstName);
+        result.put("lastName", lastName);
+        result.put("email", email);
+
+        return result;
     }
 }

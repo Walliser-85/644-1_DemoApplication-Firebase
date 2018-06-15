@@ -2,6 +2,9 @@ package ch.hevs.aislab.demo.database.entity;
 
 import com.google.firebase.database.Exclude;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ch.hevs.aislab.demo.model.Account;
 
 public class AccountEntity implements Account {
@@ -48,6 +51,7 @@ public class AccountEntity implements Account {
         this.balance = balance;
     }
 
+    @Exclude
     @Override
     public String getOwner() {
         return owner;
@@ -69,5 +73,14 @@ public class AccountEntity implements Account {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("name", name);
+        result.put("balance", balance);
+
+        return result;
     }
 }

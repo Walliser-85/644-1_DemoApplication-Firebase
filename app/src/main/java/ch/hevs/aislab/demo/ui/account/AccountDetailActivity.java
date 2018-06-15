@@ -38,7 +38,7 @@ public class AccountDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_account, frameLayout);
 
-        Long accountId = getIntent().getLongExtra("accountId", 0L);
+        String accountId = getIntent().getStringExtra("accountId");
 
         initiateView();
 
