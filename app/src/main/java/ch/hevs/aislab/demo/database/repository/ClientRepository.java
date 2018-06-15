@@ -74,8 +74,10 @@ public class ClientRepository {
                         FirebaseAuth.getInstance().getCurrentUser().delete()
                                 .addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
+                                        callback.onFailure(null);
                                         Log.d(TAG, "Rollback successful: User account deleted");
                                     } else {
+                                        callback.onFailure(task.getException());
                                         Log.d(TAG, "Rollback failed: signInWithEmail:failure", task.getException());
                                     }
                                 });
@@ -86,11 +88,33 @@ public class ClientRepository {
                 });
     }
 
-    public void update(final ClientEntity client) {
-        //TODO: Implement this using Firebase.
+    public void update(final ClientEntity client, final OnAsyncEventListener callback) {
+        FirebaseDatabase.getInstance()
+                .getReference("clients")
+                .child(client.getId())
+                .updateChildren(client.toMap(), (databaseError, databaseReference) -> {
+                    if (databaseError != null) {
+                        callback.onFailure(databaseError.toException());
+                        Log.d(TAG, "Update failure!", databaseError.toException());
+                    } else {
+                        callback.onSuccess(null);
+                        Log.d(TAG, "Update successful!");
+                    }
+                });
     }
 
-    public void delete(final ClientEntity client) {
-        //TODO: Implement this using Firebase.
+    public void delete(final ClientEntity client, OnAsyncEventListener callback) {
+        FirebaseDatabase.getInstance()
+                .getReference("clients")
+                .child(client.getId())
+                .removeValue((databaseError, databaseReference) -> {
+                    if (databaseError != null) {
+                        callback.onFailure(databaseError.toException());
+                        Log.d(TAG, "Delete failure!", databaseError.toException());
+                    } else {
+                        callback.onSuccess(null);
+                        Log.d(TAG, "Delete successful!");
+                    }
+                });
     }
 }

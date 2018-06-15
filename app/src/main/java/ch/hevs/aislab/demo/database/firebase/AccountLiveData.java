@@ -36,14 +36,14 @@ public class AccountLiveData extends LiveData<AccountEntity> {
         }
     };
 
-    public AccountLiveData(Query query, String owner) {
+    public AccountLiveData(Query query) {
         mQuery = query;
-        mOwner = owner;
+        mOwner = query.getRef().getParent().getParent().getKey();
     }
 
-    public AccountLiveData(DatabaseReference ref, String owner) {
+    public AccountLiveData(DatabaseReference ref) {
         mQuery = ref;
-        mOwner = owner;
+        mOwner = ref.getParent().getParent().getKey();
     }
 
     @Override

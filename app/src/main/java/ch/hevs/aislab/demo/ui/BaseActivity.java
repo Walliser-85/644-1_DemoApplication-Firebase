@@ -26,7 +26,6 @@ import ch.hevs.aislab.demo.ui.transaction.TransactionActivity;
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String PREFS_NAME = "SharedPrefs";
-    public static final String PREFS_USER = "LoggedIn";
     public static final String PREFS_LNG = "Language";
     /**
      *  Frame layout: Which is going to be used as parent layout for child activity layout.

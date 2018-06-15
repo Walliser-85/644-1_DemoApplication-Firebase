@@ -1,7 +1,6 @@
 package ch.hevs.aislab.demo.ui.client;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
@@ -14,9 +13,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
+import ch.hevs.aislab.demo.BaseApp;
 import ch.hevs.aislab.demo.R;
-import ch.hevs.aislab.demo.database.async.client.DeleteClient;
-import ch.hevs.aislab.demo.database.async.client.UpdateClient;
 import ch.hevs.aislab.demo.database.entity.ClientEntity;
 import ch.hevs.aislab.demo.ui.BaseActivity;
 import ch.hevs.aislab.demo.util.OnAsyncEventListener;
@@ -50,12 +50,12 @@ public class ClientActivity extends BaseActivity {
 
         getLayoutInflater().inflate(R.layout.activity_client, frameLayout);
 
-        initiateView();
+        initiateView();;
 
-        SharedPreferences settings = getSharedPreferences(BaseActivity.PREFS_NAME, 0);
-        String user = settings.getString(PREFS_USER, null);
-
-        ClientViewModel.Factory factory = new ClientViewModel.Factory(getApplication(), user);
+        ClientViewModel.Factory factory = new ClientViewModel.Factory(
+                getApplication(),
+                FirebaseAuth.getInstance().getCurrentUser().getUid()
+        );
         mViewModel = ViewModelProviders.of(this, factory).get(ClientViewModel.class);
         mViewModel.getClient().observe(this, accountEntity -> {
             if (accountEntity != null) {
@@ -107,18 +107,19 @@ public class ClientActivity extends BaseActivity {
             alertDialog.setCancelable(false);
             alertDialog.setMessage(getString(R.string.delete_msg));
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.action_delete), (dialog, which) -> {
-                new DeleteClient(getApplication(), new OnAsyncEventListener() {
-                    @Override
-                    public void onSuccess(Object object) {
-                        logout();
-                        Log.d(TAG, "deleteUser: success");
-                    }
+                ((BaseApp) getApplication()).getClientRepository()
+                        .delete(mClient, new OnAsyncEventListener() {
+                            @Override
+                            public void onSuccess(Object object) {
+                                Log.d(TAG, "deleteUser: success");
+                                logout();
+                            }
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        Log.d(TAG, "deleteUser: failure", e);
-                    }
-                }).execute(mClient);
+                            @Override
+                            public void onFailure(Exception e) {
+                                Log.d(TAG, "deleteUser: failure", e);
+                            }
+                        });
             });
             alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.action_cancel), (dialog, which) -> alertDialog.dismiss());
             alertDialog.show();
@@ -193,19 +194,18 @@ public class ClientActivity extends BaseActivity {
         mClient.setLastName(lastName);
         mClient.setPassword(pwd);
 
-        new UpdateClient(getApplication(), new OnAsyncEventListener() {
-            @Override
-            public void onSuccess(Object object) {
-                Log.d(TAG, "updateClient: success");
-                setResponse(true);
-            }
+        ((BaseApp) getApplication()).getClientRepository()
+                .update(mClient, new OnAsyncEventListener() {
+                    @Override
+                    public void onSuccess(Object object) {
+                        setResponse(true);
+                    }
 
-            @Override
-            public void onFailure(Exception e) {
-                Log.d(TAG, "updateClient: failure", e);
-                setResponse(false);
-            }
-        }).execute(mClient);
+                    @Override
+                    public void onFailure(Exception e) {
+                        setResponse(false);
+                    }
+                });
     }
 
     private void setResponse(Boolean response) {

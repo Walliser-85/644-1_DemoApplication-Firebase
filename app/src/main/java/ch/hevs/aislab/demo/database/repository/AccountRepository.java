@@ -34,13 +34,13 @@ public class AccountRepository {
         return sInstance;
     }
 
-    public LiveData<AccountEntity> getAccount(final String accountId, String owner) {
+    public LiveData<AccountEntity> getAccount(final String accountId) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("clients")
-                .child(owner)
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("accounts")
                 .child(accountId);
-        return new AccountLiveData(reference, owner);
+        return new AccountLiveData(reference);
     }
 
     public LiveData<List<AccountEntity>> getByOwner(final String owner) {

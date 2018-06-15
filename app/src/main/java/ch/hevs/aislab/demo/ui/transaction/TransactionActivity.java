@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -74,11 +76,9 @@ public class TransactionActivity extends BaseActivity {
     }
 
     private void setupViewModels() {
-        SharedPreferences settings = getSharedPreferences(BaseActivity.PREFS_NAME, 0);
-        String user = settings.getString(BaseActivity.PREFS_USER, null);
-
         AccountListViewModel.Factory factory = new AccountListViewModel.Factory(
-                getApplication(), user);
+                getApplication(),
+                FirebaseAuth.getInstance().getCurrentUser().getUid());
         mViewModel = ViewModelProviders.of(this, factory).get(AccountListViewModel.class);
         mViewModel.getOwnAccounts().observe(this, accountEntities -> {
             if (accountEntities != null) {
