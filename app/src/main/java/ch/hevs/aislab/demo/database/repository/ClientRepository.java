@@ -15,6 +15,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.List;
 
 import ch.hevs.aislab.demo.database.entity.ClientEntity;
+import ch.hevs.aislab.demo.database.firebase.ClientAccountsListLiveData;
+import ch.hevs.aislab.demo.database.firebase.ClientLiveData;
+import ch.hevs.aislab.demo.database.pojo.ClientWithAccounts;
 import ch.hevs.aislab.demo.util.OnAsyncEventListener;
 
 public class ClientRepository {
@@ -43,14 +46,18 @@ public class ClientRepository {
 
     public LiveData<ClientEntity> getClient(final String clientId) {
         //TODO: Implement this using Firebase.
-        return null;
+        DatabaseReference reference = FirebaseDatabase.getInstance()
+                .getReference("clients")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        return new ClientLiveData(reference);
     }
 
-    /*    TODO: Rework this for firebase
+    //TODO: Rework this for firebase
     public LiveData<List<ClientWithAccounts>> getOtherClientsWithAccounts(final String owner) {
-        //TODO: Implement this using Firebase.
-        return null;
-    }*/
+        DatabaseReference reference = FirebaseDatabase.getInstance()
+                .getReference("clients");
+        return new ClientAccountsListLiveData(reference, owner);
+    }
 
     public void register(final ClientEntity client, final OnAsyncEventListener callback) {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(client.getEmail(), client.getPassword()).addOnCompleteListener(task -> {

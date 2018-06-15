@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -16,14 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
+import ch.hevs.aislab.demo.database.entity.ClientEntity;
+import ch.hevs.aislab.demo.database.pojo.ClientWithAccounts;
+import ch.hevs.aislab.demo.model.Client;
 
-public class AccountListLiveData extends LiveData<List<AccountEntity>> {
+public class ClientAccountsListLiveData extends LiveData<List<ClientWithAccounts>> {
 
     private static final String TAG = "AccountListLiveData";
 
     private final Query mQuery;
     private final String mOwner;
-    private final MyValueEventListener mListener = new MyValueEventListener();
+    private final ClientAccountsListLiveData.MyValueEventListener mListener = new ClientAccountsListLiveData.MyValueEventListener();
 
     /**
      * Following changes are made in order to remove unnecessary queries to Firebase due to
@@ -41,12 +43,12 @@ public class AccountListLiveData extends LiveData<List<AccountEntity>> {
         }
     };
 
-    public AccountListLiveData(Query query, String owner) {
+    public ClientAccountsListLiveData(Query query, String owner) {
         mQuery = query;
         mOwner = owner;
     }
 
-    public AccountListLiveData(DatabaseReference ref, String owner) {
+    public ClientAccountsListLiveData(DatabaseReference ref, String owner) {
         mQuery = ref;
         mOwner = owner;
     }
@@ -72,13 +74,26 @@ public class AccountListLiveData extends LiveData<List<AccountEntity>> {
     private class MyValueEventListener implements ValueEventListener {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            setValue(toAccounts(dataSnapshot));
+            setValue(toClientWithAccountsList(dataSnapshot));
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
             Log.e(TAG, "Can't listen to query " + mQuery, databaseError.toException());
         }
+    }
+
+    private List<ClientWithAccounts> toClientWithAccountsList(DataSnapshot snapshot) {
+        List<ClientWithAccounts> clientWithAccountsList = new ArrayList<>();
+        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+            if (!childSnapshot.getKey().equals(mOwner)) {
+                ClientWithAccounts clientWithAccounts = new ClientWithAccounts();
+                clientWithAccounts.client = childSnapshot.getValue(ClientEntity.class);
+                clientWithAccounts.accounts = toAccounts(childSnapshot.child("accounts"));
+                clientWithAccountsList.add(clientWithAccounts);
+            }
+        }
+        return clientWithAccountsList;
     }
 
     private List<AccountEntity> toAccounts(DataSnapshot snapshot) {

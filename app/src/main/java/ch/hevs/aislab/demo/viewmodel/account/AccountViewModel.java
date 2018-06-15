@@ -33,10 +33,12 @@ public class AccountViewModel  extends AndroidViewModel {
         // set by default null, until we get data from the database.
         mObservableAccount.setValue(null);
 
-        LiveData<AccountEntity> account = mRepository.getAccount(accountId);
+        if (accountId != null) {
+            LiveData<AccountEntity> account = mRepository.getAccount(accountId);
 
-        // observe the changes of the account entity from the database and forward them
-        mObservableAccount.addSource(account, mObservableAccount::setValue);
+            // observe the changes of the account entity from the database and forward them
+            mObservableAccount.addSource(account, mObservableAccount::setValue);
+        }
     }
 
     /**
