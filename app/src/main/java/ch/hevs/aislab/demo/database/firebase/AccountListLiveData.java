@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,11 +39,6 @@ public class AccountListLiveData extends LiveData<List<AccountEntity>> {
             listenerRemovePending = false;
         }
     };
-
-    public AccountListLiveData(Query query, String owner) {
-        mQuery = query;
-        mOwner = owner;
-    }
 
     public AccountListLiveData(DatabaseReference ref, String owner) {
         mQuery = ref;

@@ -1,6 +1,5 @@
 package ch.hevs.aislab.demo.ui.mgmt;
 
-
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Context;

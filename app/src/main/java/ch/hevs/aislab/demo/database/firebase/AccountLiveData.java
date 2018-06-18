@@ -36,11 +36,6 @@ public class AccountLiveData extends LiveData<AccountEntity> {
         }
     };
 
-    public AccountLiveData(Query query) {
-        mQuery = query;
-        mOwner = query.getRef().getParent().getParent().getKey();
-    }
-
     public AccountLiveData(DatabaseReference ref) {
         mQuery = ref;
         mOwner = ref.getParent().getParent().getKey();

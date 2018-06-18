@@ -1,7 +1,6 @@
 package ch.hevs.aislab.demo.ui.transaction;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;

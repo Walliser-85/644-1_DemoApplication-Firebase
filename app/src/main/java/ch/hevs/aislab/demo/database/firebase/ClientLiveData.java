@@ -35,10 +35,6 @@ public class ClientLiveData extends LiveData<ClientEntity> {
         }
     };
 
-    public ClientLiveData(Query query, Class test) {
-        this.mQuery = query;
-    }
-
     public ClientLiveData(DatabaseReference ref) {
         this.mQuery = ref;
     }

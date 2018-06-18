@@ -17,7 +17,6 @@ import java.util.List;
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.database.entity.ClientEntity;
 import ch.hevs.aislab.demo.database.pojo.ClientWithAccounts;
-import ch.hevs.aislab.demo.model.Client;
 
 public class ClientAccountsListLiveData extends LiveData<List<ClientWithAccounts>> {
 
@@ -42,11 +41,6 @@ public class ClientAccountsListLiveData extends LiveData<List<ClientWithAccounts
             listenerRemovePending = false;
         }
     };
-
-    public ClientAccountsListLiveData(Query query, String owner) {
-        mQuery = query;
-        mOwner = owner;
-    }
 
     public ClientAccountsListLiveData(DatabaseReference ref, String owner) {
         mQuery = ref;
