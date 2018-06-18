@@ -23,7 +23,6 @@ public class AccountListViewModel extends AndroidViewModel {
     private AccountRepository mRepository;
 
     // MediatorLiveData can observe other LiveData objects and react on their emissions.
-    //TODO: Implement this using Firebase.
     private final MediatorLiveData<List<ClientWithAccounts>> mObservableClientAccounts;
     private final MediatorLiveData<List<AccountEntity>> mObservableOwnAccounts;
 
@@ -33,20 +32,16 @@ public class AccountListViewModel extends AndroidViewModel {
 
         mRepository = accountRepository;
 
-        //TODO: Implement this using Firebase.
         mObservableClientAccounts = new MediatorLiveData<>();
         mObservableOwnAccounts = new MediatorLiveData<>();
         // set by default null, until we get data from the database.
-        //TODO: Implement this using Firebase.
         mObservableClientAccounts.setValue(null);
         mObservableOwnAccounts.setValue(null);
 
-        //TODO: Implement this using Firebase.
         LiveData<List<ClientWithAccounts>> clientAccounts = clientRepository.getOtherClientsWithAccounts(ownerId);
         LiveData<List<AccountEntity>> ownAccounts = mRepository.getByOwner(ownerId);
 
         // observe the changes of the entities from the database and forward them
-        //TODO: Implement this using Firebase.
         mObservableClientAccounts.addSource(clientAccounts, mObservableClientAccounts::setValue);
         mObservableOwnAccounts.addSource(ownAccounts, mObservableOwnAccounts::setValue);
     }
@@ -82,7 +77,6 @@ public class AccountListViewModel extends AndroidViewModel {
     /**
      * Expose the LiveData ClientWithAccounts query so the UI can observe it.
      */
-    //TODO: Implement this using Firebase.
     public LiveData<List<ClientWithAccounts>> getClientAccounts() {
         return mObservableClientAccounts;
     }

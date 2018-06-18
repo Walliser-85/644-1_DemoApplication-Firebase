@@ -89,19 +89,20 @@ public class ClientAccountsListLiveData extends LiveData<List<ClientWithAccounts
             if (!childSnapshot.getKey().equals(mOwner)) {
                 ClientWithAccounts clientWithAccounts = new ClientWithAccounts();
                 clientWithAccounts.client = childSnapshot.getValue(ClientEntity.class);
-                clientWithAccounts.accounts = toAccounts(childSnapshot.child("accounts"));
+                clientWithAccounts.client.setId(childSnapshot.getKey());
+                clientWithAccounts.accounts = toAccounts(childSnapshot.child("accounts"), childSnapshot.getKey());
                 clientWithAccountsList.add(clientWithAccounts);
             }
         }
         return clientWithAccountsList;
     }
 
-    private List<AccountEntity> toAccounts(DataSnapshot snapshot) {
+    private List<AccountEntity> toAccounts(DataSnapshot snapshot, String ownerId) {
         List<AccountEntity> accounts = new ArrayList<>();
         for (DataSnapshot childSnapshot : snapshot.getChildren()) {
             AccountEntity entity = childSnapshot.getValue(AccountEntity.class);
             entity.setId(childSnapshot.getKey());
-            entity.setOwner(mOwner);
+            entity.setOwner(ownerId);
             accounts.add(entity);
         }
         return accounts;
