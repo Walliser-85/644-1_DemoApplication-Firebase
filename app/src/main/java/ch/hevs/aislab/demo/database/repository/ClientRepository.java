@@ -48,7 +48,6 @@ public class ClientRepository {
         return new ClientLiveData(reference);
     }
 
-    //TODO: Rework this for firebase
     public LiveData<List<ClientWithAccounts>> getOtherClientsWithAccounts(final String owner) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("clients");

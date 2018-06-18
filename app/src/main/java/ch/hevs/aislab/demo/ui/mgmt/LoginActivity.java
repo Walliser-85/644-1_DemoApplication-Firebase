@@ -10,7 +10,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+
 
 import ch.hevs.aislab.demo.BaseApp;
 import ch.hevs.aislab.demo.R;
@@ -55,9 +55,6 @@ public class LoginActivity extends AppCompatActivity {
 
         Button registerButton = findViewById(R.id.register_button);
         registerButton.setOnClickListener(view -> startActivity(new Intent(LoginActivity.this, RegisterActivity.class)));
-
-        Button demoDataButton = findViewById(R.id.demo_data_button);
-        demoDataButton.setOnClickListener(view -> reinitializeDatabase());
     }
 
     @Override
@@ -135,12 +132,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
-    }
-
-    private void reinitializeDatabase() {
-        //TODO: Implement this using Firebase.
-        //initializeDemoData(AppDatabase.getInstance(this));
-        Toast.makeText(this, getString(R.string.demo_data_initiated), Toast.LENGTH_LONG).show();
     }
 }
 

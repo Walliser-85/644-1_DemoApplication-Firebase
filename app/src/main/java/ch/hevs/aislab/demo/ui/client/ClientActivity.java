@@ -142,12 +142,9 @@ public class ClientActivity extends BaseActivity {
             linearLayout.setVisibility(View.VISIBLE);
             mEtFirstName.setFocusable(true);
             mEtFirstName.setEnabled(true);
+            mEtFirstName.requestFocus();
             mEtLastName.setFocusable(true);
             mEtLastName.setEnabled(true);
-            mEtEmail.setFocusable(true);
-            mEtEmail.setEnabled(true);
-            mEtEmail.setFocusableInTouchMode(true);
-            mEtEmail.requestFocus();
         } else {
             saveChanges(
                     mEtFirstName.getText().toString(),
@@ -162,8 +159,6 @@ public class ClientActivity extends BaseActivity {
             mEtFirstName.setEnabled(false);
             mEtLastName.setFocusable(false);
             mEtLastName.setEnabled(false);
-            mEtEmail.setFocusable(false);
-            mEtEmail.setEnabled(false);
         }
         mEditable = !mEditable;
     }

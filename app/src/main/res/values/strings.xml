@@ -88,6 +88,4 @@
     <string name="transaction_no_selection">Please select a recipient</string>
     <string name="transaction_no_amount">Please specify an amount</string>
     <string name="action_register">Register</string>
-    <string name="action_demo_data">Reset Demo Data</string>
-    <string name="demo_data_initiated">Demo data initiated</string>
 </resources>
