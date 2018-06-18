@@ -85,7 +85,7 @@ public class ClientRepository {
                                 });
                     } else {
                         Log.d(TAG, "Firebase DB Insert successful!");
-                        callback.onSuccess(null);
+                        callback.onSuccess();
                     }
                 });
     }
@@ -99,10 +99,13 @@ public class ClientRepository {
                         callback.onFailure(databaseError.toException());
                         Log.d(TAG, "Update failure!", databaseError.toException());
                     } else {
-                        callback.onSuccess(null);
+                        callback.onSuccess();
                         Log.d(TAG, "Update successful!");
                     }
                 });
+        FirebaseAuth.getInstance().getCurrentUser().updatePassword(client.getPassword()).addOnFailureListener(
+                e -> Log.d(TAG, "updatePassword failure!", e)
+        );
     }
 
     public void delete(final ClientEntity client, OnAsyncEventListener callback) {
@@ -114,7 +117,7 @@ public class ClientRepository {
                         callback.onFailure(databaseError.toException());
                         Log.d(TAG, "Delete failure!", databaseError.toException());
                     } else {
-                        callback.onSuccess(null);
+                        callback.onSuccess();
                         Log.d(TAG, "Delete successful!");
                     }
                 });

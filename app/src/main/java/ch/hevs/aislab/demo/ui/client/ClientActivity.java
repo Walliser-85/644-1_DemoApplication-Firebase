@@ -50,7 +50,7 @@ public class ClientActivity extends BaseActivity {
 
         getLayoutInflater().inflate(R.layout.activity_client, frameLayout);
 
-        initiateView();;
+        initiateView();
 
         ClientViewModel.Factory factory = new ClientViewModel.Factory(
                 getApplication(),
@@ -107,10 +107,9 @@ public class ClientActivity extends BaseActivity {
             alertDialog.setCancelable(false);
             alertDialog.setMessage(getString(R.string.delete_msg));
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.action_delete), (dialog, which) -> {
-                ((BaseApp) getApplication()).getClientRepository()
-                        .delete(mClient, new OnAsyncEventListener() {
+                mViewModel.deleteClient(mClient, new OnAsyncEventListener() {
                             @Override
-                            public void onSuccess(Object object) {
+                            public void onSuccess() {
                                 Log.d(TAG, "deleteUser: success");
                                 logout();
                             }
@@ -168,6 +167,8 @@ public class ClientActivity extends BaseActivity {
             mEtFirstName.setText(mClient.getFirstName());
             mEtLastName.setText(mClient.getLastName());
             mEtEmail.setText(mClient.getEmail());
+            mEtPwd1.setText("");
+            mEtPwd2.setText("");
         }
     }
 
@@ -175,8 +176,6 @@ public class ClientActivity extends BaseActivity {
         if (!pwd.equals(pwd2) || pwd.length() < 5) {
             mToast = Toast.makeText(this, getString(R.string.error_edit_invalid_password), Toast.LENGTH_LONG);
             mToast.show();
-            mEtPwd1.setText("");
-            mEtPwd2.setText("");
             return;
         }
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -184,15 +183,13 @@ public class ClientActivity extends BaseActivity {
             mEtEmail.requestFocus();
             return;
         }
-        mClient.setEmail(email);
         mClient.setFirstName(firstName);
         mClient.setLastName(lastName);
         mClient.setPassword(pwd);
 
-        ((BaseApp) getApplication()).getClientRepository()
-                .update(mClient, new OnAsyncEventListener() {
+        mViewModel.updateClient(mClient, new OnAsyncEventListener() {
                     @Override
-                    public void onSuccess(Object object) {
+                    public void onSuccess() {
                         setResponse(true);
                     }
 

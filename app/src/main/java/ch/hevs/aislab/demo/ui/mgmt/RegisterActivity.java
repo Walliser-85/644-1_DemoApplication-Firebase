@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         mRepository.register(newClient, new OnAsyncEventListener() {
             @Override
-            public void onSuccess(Object object) {
+            public void onSuccess() {
                 Log.d(TAG, "createUserWithEmail: success");
                 setResponse(true);
             }
