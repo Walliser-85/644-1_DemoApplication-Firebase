@@ -44,7 +44,7 @@ public class ClientRepository {
     public LiveData<ClientEntity> getClient(final String clientId) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("clients")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                .child(clientId);
         return new ClientLiveData(reference);
     }
 

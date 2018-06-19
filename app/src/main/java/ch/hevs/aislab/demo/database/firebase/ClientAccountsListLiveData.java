@@ -20,7 +20,7 @@ import ch.hevs.aislab.demo.database.pojo.ClientWithAccounts;
 
 public class ClientAccountsListLiveData extends LiveData<List<ClientWithAccounts>> {
 
-    private static final String TAG = "AccountListLiveData";
+    private static final String TAG = "ClientAccountsLiveData";
 
     private final Query mQuery;
     private final String mOwner;
