@@ -15,9 +15,7 @@ import android.widget.ProgressBar;
 import ch.hevs.aislab.demo.BaseApp;
 import ch.hevs.aislab.demo.R;
 import ch.hevs.aislab.demo.database.repository.ClientRepository;
-import ch.hevs.aislab.demo.ui.BaseActivity;
 import ch.hevs.aislab.demo.ui.MainActivity;
-import ch.hevs.aislab.demo.util.LocaleManager;
 
 /**
  * A login screen that offers login via email/password.
@@ -36,9 +34,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.title_activity_login);
-
-        String lang = getSharedPreferences(BaseActivity.PREFS_NAME, 0).getString(BaseActivity.PREFS_LNG, "en");
-        LocaleManager.updateLanguage(this, lang);
 
         setContentView(R.layout.activity_login);
 

@@ -1,6 +1,7 @@
 package ch.hevs.aislab.demo.ui.transaction;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
@@ -25,6 +26,7 @@ import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.database.entity.ClientEntity;
 import ch.hevs.aislab.demo.database.pojo.ClientWithAccounts;
 import ch.hevs.aislab.demo.ui.BaseActivity;
+import ch.hevs.aislab.demo.ui.MainActivity;
 import ch.hevs.aislab.demo.viewmodel.account.AccountListViewModel;
 
 public class TransactionActivity extends BaseActivity {
@@ -174,5 +176,15 @@ public class TransactionActivity extends BaseActivity {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
+        super.onBackPressed();
+        startActivity(new Intent(this, MainActivity.class));
     }
 }
