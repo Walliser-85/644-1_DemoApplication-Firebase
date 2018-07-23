@@ -1,7 +1,6 @@
 package ch.hevs.aislab.demo.database.firebase;
 
 import android.arch.lifecycle.LiveData;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 

@@ -52,16 +52,6 @@ public class LoginActivity extends AppCompatActivity {
         registerButton.setOnClickListener(view -> startActivity(new Intent(LoginActivity.this, RegisterActivity.class)));
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-    }
-
     /**
      * Attempts to sign in or register the client specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the

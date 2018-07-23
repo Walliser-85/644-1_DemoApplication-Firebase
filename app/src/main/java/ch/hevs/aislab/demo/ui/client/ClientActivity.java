@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import ch.hevs.aislab.demo.BaseApp;
 import ch.hevs.aislab.demo.R;
 import ch.hevs.aislab.demo.database.entity.ClientEntity;
 import ch.hevs.aislab.demo.ui.BaseActivity;

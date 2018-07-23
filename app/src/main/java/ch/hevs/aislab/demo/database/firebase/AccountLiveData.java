@@ -1,14 +1,12 @@
 package ch.hevs.aislab.demo.database.firebase;
 
 import android.arch.lifecycle.LiveData;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
