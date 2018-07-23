@@ -16,47 +16,24 @@ import ch.hevs.aislab.demo.database.entity.AccountEntity;
 public class AccountLiveData extends LiveData<AccountEntity> {
     private static final String TAG = "AccountLiveData";
 
-    private final Query mQuery;
+    private final DatabaseReference mReference;
     private final String mOwner;
     private final AccountLiveData.MyValueEventListener mListener = new AccountLiveData.MyValueEventListener();
 
-    /**
-     * Following changes are made in order to remove unnecessary queries to Firebase due to
-     * state changes in Activities (device orientation change)
-     * Source: https://firebase.googleblog.com/2017/12/using-android-architecture-components_22.html
-     */
-    private boolean listenerRemovePending = false;
-    private final Handler handler = new Handler();
-    private final Runnable removeListener = new Runnable() {
-        @Override
-        public void run() {
-            Log.d(TAG, "onInactive");
-            mQuery.removeEventListener(mListener);
-            listenerRemovePending = false;
-        }
-    };
-
     public AccountLiveData(DatabaseReference ref) {
-        mQuery = ref;
+        mReference = ref;
         mOwner = ref.getParent().getParent().getKey();
     }
 
     @Override
     protected void onActive() {
         Log.d(TAG, "onActive");
-        if (listenerRemovePending) {
-            handler.removeCallbacks(removeListener);
-        }
-        else {
-            mQuery.addValueEventListener(mListener);
-        }
-        listenerRemovePending = false;
+        mReference.addValueEventListener(mListener);
     }
 
     @Override
     protected void onInactive() {
-        handler.postDelayed(removeListener, 2000);
-        listenerRemovePending = true;
+        Log.d(TAG, "onInactive");
     }
 
     private class MyValueEventListener implements ValueEventListener {
@@ -70,7 +47,7 @@ public class AccountLiveData extends LiveData<AccountEntity> {
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.e(TAG, "Can't listen to query " + mQuery, databaseError.toException());
+            Log.e(TAG, "Can't listen to query " + mReference, databaseError.toException());
         }
     }
 }
