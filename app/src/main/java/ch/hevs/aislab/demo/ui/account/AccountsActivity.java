@@ -26,6 +26,7 @@ import ch.hevs.aislab.demo.R;
 import ch.hevs.aislab.demo.adapter.RecyclerAdapter;
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.ui.BaseActivity;
+import ch.hevs.aislab.demo.util.OnAsyncEventListener;
 import ch.hevs.aislab.demo.util.RecyclerViewItemClickListener;
 import ch.hevs.aislab.demo.viewmodel.account.AccountListViewModel;
 
@@ -33,9 +34,9 @@ public class AccountsActivity extends BaseActivity {
 
     private static final String TAG = "AccountsActivity";
 
-    private List<AccountEntity> mAccounts;
-    private RecyclerAdapter<AccountEntity> mAdapter;
-    private AccountListViewModel mViewModel;
+    private List<AccountEntity> accounts;
+    private RecyclerAdapter<AccountEntity> adapter;
+    private AccountListViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,22 +60,22 @@ public class AccountsActivity extends BaseActivity {
                 LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        mAccounts = new ArrayList<>();
-        mAdapter = new RecyclerAdapter<>(new RecyclerViewItemClickListener() {
+        accounts = new ArrayList<>();
+        adapter = new RecyclerAdapter<>(new RecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 Log.d(TAG, "clicked position:" + position);
-                Log.d(TAG, "clicked on: " + mAccounts.get(position).getName());
+                Log.d(TAG, "clicked on: " + accounts.get(position).getName());
 
                 Intent intent = new Intent(AccountsActivity.this, AccountDetailActivity.class);
-                intent.putExtra("accountId", mAccounts.get(position).getId());
+                intent.putExtra("accountId", accounts.get(position).getId());
                 startActivity(intent);
             }
 
             @Override
             public void onItemLongClick(View v, int position) {
                 Log.d(TAG, "longClicked position:" + position);
-                Log.d(TAG, "longClicked on: " + mAccounts.get(position).getName());
+                Log.d(TAG, "longClicked on: " + accounts.get(position).getName());
 
                 createDeleteDialog(position);
             }
@@ -87,15 +88,15 @@ public class AccountsActivity extends BaseActivity {
 
         AccountListViewModel.Factory factory = new AccountListViewModel.Factory(
                 getApplication(), FirebaseAuth.getInstance().getCurrentUser().getUid());
-        mViewModel = ViewModelProviders.of(this, factory).get(AccountListViewModel.class);
-        mViewModel.getOwnAccounts().observe(this, accountEntities -> {
+        viewModel = ViewModelProviders.of(this, factory).get(AccountListViewModel.class);
+        viewModel.getOwnAccounts().observe(this, accountEntities -> {
             if (accountEntities != null) {
-                mAccounts = accountEntities;
-                mAdapter.setData(mAccounts);
+                accounts = accountEntities;
+                adapter.setData(accounts);
             }
         });
 
-        recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -112,7 +113,7 @@ public class AccountsActivity extends BaseActivity {
     }
 
     private void createDeleteDialog(final int position) {
-        final AccountEntity account = mAccounts.get(position);
+        final AccountEntity account = accounts.get(position);
         LayoutInflater inflater = LayoutInflater.from(this);
         final View view = inflater.inflate(R.layout.row_delete_item, null);
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
@@ -124,7 +125,17 @@ public class AccountsActivity extends BaseActivity {
 
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.action_accept), (dialog, which) -> {
             Toast toast = Toast.makeText(this, getString(R.string.account_deleted), Toast.LENGTH_LONG);
-            mViewModel.deleteAccount(account);
+            viewModel.deleteAccount(account, new OnAsyncEventListener() {
+                @Override
+                public void onSuccess() {
+                    Log.d(TAG, "deleteAccount: success");
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.d(TAG, "deleteAccount: failure", e);
+                }
+            });
             toast.show();
         });
 

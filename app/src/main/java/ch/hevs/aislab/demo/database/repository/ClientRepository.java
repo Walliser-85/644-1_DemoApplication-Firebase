@@ -21,24 +21,26 @@ public class ClientRepository {
 
     private static final String TAG = "ClientRepository";
 
-    private static ClientRepository sInstance;
+    private static ClientRepository instance;
 
     private ClientRepository() {
     }
 
     public static ClientRepository getInstance() {
-        if (sInstance == null) {
+        if (instance == null) {
             synchronized (AccountRepository.class) {
-                if (sInstance == null) {
-                    sInstance = new ClientRepository();
+                if (instance == null) {
+                    instance = new ClientRepository();
                 }
             }
         }
-        return sInstance;
+        return instance;
     }
 
-    public void signIn(final String email, final String password, final OnCompleteListener<AuthResult> listener) {
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(listener);
+    public void signIn(final String email, final String password,
+                       final OnCompleteListener<AuthResult> listener) {
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(listener);
     }
 
     public LiveData<ClientEntity> getClient(final String clientId) {
@@ -55,7 +57,10 @@ public class ClientRepository {
     }
 
     public void register(final ClientEntity client, final OnAsyncEventListener callback) {
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(client.getEmail(), client.getPassword()).addOnCompleteListener(task -> {
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(
+                client.getEmail(),
+                client.getPassword()
+        ).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 client.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 insert(client, callback);
@@ -71,7 +76,6 @@ public class ClientRepository {
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .setValue(client, (databaseError, databaseReference) -> {
                     if (databaseError != null) {
-                        Log.d(TAG, "Firebase DB Insert failure!", databaseError.toException());
                         callback.onFailure(databaseError.toException());
                         FirebaseAuth.getInstance().getCurrentUser().delete()
                                 .addOnCompleteListener(task -> {
@@ -80,11 +84,11 @@ public class ClientRepository {
                                         Log.d(TAG, "Rollback successful: User account deleted");
                                     } else {
                                         callback.onFailure(task.getException());
-                                        Log.d(TAG, "Rollback failed: signInWithEmail:failure", task.getException());
+                                        Log.d(TAG, "Rollback failed: signInWithEmail:failure",
+                                                task.getException());
                                     }
                                 });
                     } else {
-                        Log.d(TAG, "Firebase DB Insert successful!");
                         callback.onSuccess();
                     }
                 });
@@ -97,14 +101,13 @@ public class ClientRepository {
                 .updateChildren(client.toMap(), (databaseError, databaseReference) -> {
                     if (databaseError != null) {
                         callback.onFailure(databaseError.toException());
-                        Log.d(TAG, "Update failure!", databaseError.toException());
                     } else {
                         callback.onSuccess();
-                        Log.d(TAG, "Update successful!");
                     }
                 });
-        FirebaseAuth.getInstance().getCurrentUser().updatePassword(client.getPassword()).addOnFailureListener(
-                e -> Log.d(TAG, "updatePassword failure!", e)
+        FirebaseAuth.getInstance().getCurrentUser().updatePassword(client.getPassword())
+                .addOnFailureListener(
+                        e -> Log.d(TAG, "updatePassword failure!", e)
         );
     }
 
@@ -115,10 +118,8 @@ public class ClientRepository {
                 .removeValue((databaseError, databaseReference) -> {
                     if (databaseError != null) {
                         callback.onFailure(databaseError.toException());
-                        Log.d(TAG, "Delete failure!", databaseError.toException());
                     } else {
                         callback.onSuccess();
-                        Log.d(TAG, "Delete successful!");
                     }
                 });
     }

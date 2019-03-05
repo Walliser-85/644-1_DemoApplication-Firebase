@@ -15,6 +15,7 @@ import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.database.pojo.ClientWithAccounts;
 import ch.hevs.aislab.demo.database.repository.AccountRepository;
 import ch.hevs.aislab.demo.database.repository.ClientRepository;
+import ch.hevs.aislab.demo.util.OnAsyncEventListener;
 
 public class AccountListViewModel extends AndroidViewModel {
 
@@ -88,13 +89,13 @@ public class AccountListViewModel extends AndroidViewModel {
         return mObservableOwnAccounts;
     }
 
-    public void deleteAccount(AccountEntity account) {
+    public void deleteAccount(AccountEntity account, OnAsyncEventListener callback) {
         ((BaseApp) getApplication()).getAccountRepository()
-                .delete(account);
+                .delete(account, callback);
     }
 
-    public void executeTransaction(final AccountEntity sender, final AccountEntity recipient) {
-        //noinspection unchecked
-        ((BaseApp) getApplication()).getAccountRepository().transaction(sender, recipient);
+    public void executeTransaction(final AccountEntity sender, final AccountEntity recipient,
+                                   OnAsyncEventListener callback) {
+        ((BaseApp) getApplication()).getAccountRepository().transaction(sender, recipient, callback);
     }
 }

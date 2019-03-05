@@ -19,59 +19,59 @@ public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
 
-    private ClientRepository mRepository;
+    private ClientRepository repository;
 
-    private Toast mToast;
+    private Toast toast;
 
-    private EditText mEtFirstName;
-    private EditText mEtLastName;
-    private EditText mEtEmail;
-    private EditText mEtPwd1;
-    private EditText mEtPwd2;
+    private EditText etFirstName;
+    private EditText etLastName;
+    private EditText etEmail;
+    private EditText etPwd1;
+    private EditText etPwd2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        mRepository = ((BaseApp) getApplication()).getClientRepository();
+        repository = ((BaseApp) getApplication()).getClientRepository();
 
         initializeForm();
 
-        mToast = Toast.makeText(this, getString(R.string.client_created), Toast.LENGTH_LONG);
+        toast = Toast.makeText(this, getString(R.string.client_created), Toast.LENGTH_LONG);
     }
 
     private void initializeForm() {
-        mEtFirstName = findViewById(R.id.firstName);
-        mEtLastName = findViewById(R.id.lastName);
-        mEtEmail = findViewById(R.id.email);
-        mEtPwd1 = findViewById(R.id.password);
-        mEtPwd2 = findViewById(R.id.passwordRep);
+        etFirstName = findViewById(R.id.firstName);
+        etLastName = findViewById(R.id.lastName);
+        etEmail = findViewById(R.id.email);
+        etPwd1 = findViewById(R.id.password);
+        etPwd2 = findViewById(R.id.passwordRep);
         Button saveBtn = findViewById(R.id.editButton);
         saveBtn.setOnClickListener(view -> saveChanges(
-                mEtFirstName.getText().toString(),
-                mEtLastName.getText().toString(),
-                mEtEmail.getText().toString(),
-                mEtPwd1.getText().toString(),
-                mEtPwd2.getText().toString()
+                etFirstName.getText().toString(),
+                etLastName.getText().toString(),
+                etEmail.getText().toString(),
+                etPwd1.getText().toString(),
+                etPwd2.getText().toString()
         ));
     }
 
     private void saveChanges(String firstName, String lastName, String email, String pwd, String pwd2) {
         if (!pwd.equals(pwd2) || pwd.length() < 5) {
-            mEtPwd1.setError(getString(R.string.error_invalid_password));
-            mEtPwd1.requestFocus();
-            mEtPwd1.setText("");
-            mEtPwd2.setText("");
+            etPwd1.setError(getString(R.string.error_invalid_password));
+            etPwd1.requestFocus();
+            etPwd1.setText("");
+            etPwd2.setText("");
             return;
         }
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mEtEmail.setError(getString(R.string.error_invalid_email));
-            mEtEmail.requestFocus();
+            etEmail.setError(getString(R.string.error_invalid_email));
+            etEmail.requestFocus();
             return;
         }
         ClientEntity newClient = new ClientEntity(email, firstName, lastName, pwd);
 
-        mRepository.register(newClient, new OnAsyncEventListener() {
+        repository.register(newClient, new OnAsyncEventListener() {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "createUserWithEmail: success");
@@ -88,12 +88,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void setResponse(Boolean response) {
         if (response) {
-            mToast.show();
+            toast.show();
             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
             startActivity(intent);
         } else {
-            mEtEmail.setError(getString(R.string.error_used_email));
-            mEtEmail.requestFocus();
+            etEmail.setError(getString(R.string.error_used_email));
+            etEmail.requestFocus();
         }
     }
 }

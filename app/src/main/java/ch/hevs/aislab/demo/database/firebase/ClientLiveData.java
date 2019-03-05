@@ -14,17 +14,17 @@ import ch.hevs.aislab.demo.database.entity.ClientEntity;
 public class ClientLiveData extends LiveData<ClientEntity> {
     private static final String TAG = "ClientLiveData";
 
-    private final DatabaseReference mReference;
-    private final ClientLiveData.MyValueEventListener mListener = new ClientLiveData.MyValueEventListener();
+    private final DatabaseReference reference;
+    private final ClientLiveData.MyValueEventListener listener = new ClientLiveData.MyValueEventListener();
 
     public ClientLiveData(DatabaseReference ref) {
-        this.mReference = ref;
+        this.reference = ref;
     }
 
     @Override
     protected void onActive() {
         Log.d(TAG, "onActive");
-        mReference.addValueEventListener(mListener);
+        reference.addValueEventListener(listener);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ClientLiveData extends LiveData<ClientEntity> {
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.e(TAG, "Can't listen to query " + mReference, databaseError.toException());
+            Log.e(TAG, "Can't listen to query " + reference, databaseError.toException());
         }
     }
 }

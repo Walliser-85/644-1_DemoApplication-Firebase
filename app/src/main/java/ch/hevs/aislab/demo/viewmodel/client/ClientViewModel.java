@@ -18,7 +18,7 @@ public class ClientViewModel extends AndroidViewModel {
 
     private static final String TAG = "AccountViewModel";
 
-    private ClientRepository mRepository;
+    private ClientRepository repository;
 
     // MediatorLiveData can observe other LiveData objects and react on their emissions.
     private final MediatorLiveData<ClientEntity> mObservableClient;
@@ -27,13 +27,13 @@ public class ClientViewModel extends AndroidViewModel {
                             final String clientId, ClientRepository clientRepository) {
         super(application);
 
-        mRepository = clientRepository;
+        repository = clientRepository;
 
         mObservableClient = new MediatorLiveData<>();
         // set by default null, until we get data from the database.
         mObservableClient.setValue(null);
 
-        LiveData<ClientEntity> account = mRepository.getClient(clientId);
+        LiveData<ClientEntity> account = repository.getClient(clientId);
 
         // observe the changes of the client entity from the database and forward them
         mObservableClient.addSource(account, mObservableClient::setValue);
@@ -45,22 +45,22 @@ public class ClientViewModel extends AndroidViewModel {
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
 
         @NonNull
-        private final Application mApplication;
+        private final Application application;
 
-        private final String mClientId;
+        private final String clientId;
 
-        private final ClientRepository mRepository;
+        private final ClientRepository repository;
 
         public Factory(@NonNull Application application, String clientId) {
-            mApplication = application;
-            mClientId = clientId;
-            mRepository = ((BaseApp) application).getClientRepository();
+            this.application = application;
+            this.clientId = clientId;
+            repository = ((BaseApp) application).getClientRepository();
         }
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
             //noinspection unchecked
-            return (T) new ClientViewModel(mApplication, mClientId, mRepository);
+            return (T) new ClientViewModel(application, clientId, repository);
         }
     }
 
@@ -73,35 +73,11 @@ public class ClientViewModel extends AndroidViewModel {
 
     public void updateClient(ClientEntity client, OnAsyncEventListener callback) {
         ((BaseApp) getApplication()).getClientRepository()
-                .update(client, new OnAsyncEventListener() {
-                    @Override
-                    public void onSuccess() {
-                        callback.onSuccess();
-                        Log.d(TAG, "updateClient: success");
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        callback.onFailure(e);
-                        Log.d(TAG, "updateClient: failure", e);
-                    }
-                });
+                .update(client, callback);
     }
 
     public void deleteClient(ClientEntity client, OnAsyncEventListener callback) {
         ((BaseApp) getApplication()).getClientRepository()
-                .delete(client, new OnAsyncEventListener() {
-                    @Override
-                    public void onSuccess() {
-                        callback.onSuccess();
-                        Log.d(TAG, "deleteClient: success");
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        callback.onFailure(e);
-                        Log.d(TAG, "deleteClient: failure", e);
-                    }
-                });
+                .delete(client, callback);
     }
 }

@@ -7,9 +7,7 @@ import com.google.firebase.database.Exclude;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.hevs.aislab.demo.model.Client;
-
-public class ClientEntity implements Client, Comparable {
+public class ClientEntity implements Comparable {
     private String id;
     private String email;
     private String firstName;
@@ -17,13 +15,6 @@ public class ClientEntity implements Client, Comparable {
     private String password;
 
     public ClientEntity() {
-    }
-
-    public ClientEntity(Client client) {
-        email = client.getEmail();
-        firstName = client.getFirstName();
-        lastName = client.getLastName();
-        password = client.getPassword();
     }
 
     public ClientEntity(@NonNull String email, String firstName, String lastName, String password) {
@@ -34,7 +25,6 @@ public class ClientEntity implements Client, Comparable {
     }
 
     @Exclude
-    @Override
     public String getId() {
         return id;
     }
@@ -43,7 +33,6 @@ public class ClientEntity implements Client, Comparable {
         this.id = id;
     }
 
-    @Override
     public String getEmail() {
         return email;
     }
@@ -52,7 +41,6 @@ public class ClientEntity implements Client, Comparable {
         this.email = email;
     }
 
-    @Override
     public String getFirstName() {
         return firstName;
     }
@@ -61,7 +49,6 @@ public class ClientEntity implements Client, Comparable {
         this.firstName = firstName;
     }
 
-    @Override
     public String getLastName() {
         return lastName;
     }
@@ -71,7 +58,6 @@ public class ClientEntity implements Client, Comparable {
     }
 
     @Exclude
-    @Override
     public String getPassword() {
         return password;
     }

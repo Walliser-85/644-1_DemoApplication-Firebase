@@ -11,10 +11,9 @@ import android.support.annotation.NonNull;
 import ch.hevs.aislab.demo.BaseApp;
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.database.repository.AccountRepository;
+import ch.hevs.aislab.demo.util.OnAsyncEventListener;
 
 public class AccountViewModel  extends AndroidViewModel {
-
-    private static final String TAG = "AccountViewModel";
 
     private AccountRepository mRepository;
 
@@ -71,13 +70,13 @@ public class AccountViewModel  extends AndroidViewModel {
         return mObservableAccount;
     }
 
-    public void createAccount(AccountEntity account) {
+    public void createAccount(AccountEntity account, OnAsyncEventListener callback) {
         ((BaseApp) getApplication()).getAccountRepository()
-                .insert(account);
+                .insert(account, callback);
     }
 
-    public void updateAccount(AccountEntity account) {
+    public void updateAccount(AccountEntity account, OnAsyncEventListener callback) {
         ((BaseApp) getApplication()).getAccountRepository()
-                .update(account);
+                .update(account, callback);
     }
 }

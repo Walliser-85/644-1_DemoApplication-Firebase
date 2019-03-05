@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,21 +28,22 @@ import ch.hevs.aislab.demo.database.entity.ClientEntity;
 import ch.hevs.aislab.demo.database.pojo.ClientWithAccounts;
 import ch.hevs.aislab.demo.ui.BaseActivity;
 import ch.hevs.aislab.demo.ui.MainActivity;
+import ch.hevs.aislab.demo.util.OnAsyncEventListener;
 import ch.hevs.aislab.demo.viewmodel.account.AccountListViewModel;
 
 public class TransactionActivity extends BaseActivity {
 
     private final String TAG = "TransactionFragment";
 
-    private Spinner mSpinnerFromAccount;
-    private Spinner mSpinnerToAccount;
+    private Spinner spinnerFromAccount;
+    private Spinner spinnerToAccount;
 
-    private SortedMap<ClientEntity, List<AccountEntity>> mClientEntityMultimap;
+    private SortedMap<ClientEntity, List<AccountEntity>> clientEntityMultimap;
 
-    private ListAdapter<AccountEntity> mAdapterFromAccount;
-    private ListAdapter<AccountEntity> mAdapterToAccount;
+    private ListAdapter<AccountEntity> adapterFromAccount;
+    private ListAdapter<AccountEntity> adapterToAccount;
 
-    private AccountListViewModel mViewModel;
+    private AccountListViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,13 +83,13 @@ public class TransactionActivity extends BaseActivity {
         AccountListViewModel.Factory factory = new AccountListViewModel.Factory(
                 getApplication(),
                 FirebaseAuth.getInstance().getCurrentUser().getUid());
-        mViewModel = ViewModelProviders.of(this, factory).get(AccountListViewModel.class);
-        mViewModel.getOwnAccounts().observe(this, accountEntities -> {
+        viewModel = ViewModelProviders.of(this, factory).get(AccountListViewModel.class);
+        viewModel.getOwnAccounts().observe(this, accountEntities -> {
             if (accountEntities != null) {
                 updateFromAccSpinner(accountEntities);
             }
         });
-        mViewModel.getClientAccounts().observe(this, clientAccounts -> {
+        viewModel.getClientAccounts().observe(this, clientAccounts -> {
             if (clientAccounts != null) {
                 setupMap(clientAccounts);
             }
@@ -99,23 +101,23 @@ public class TransactionActivity extends BaseActivity {
     coming from the ViewModel.
      */
     private void setupMap(List<ClientWithAccounts> clientAccounts) {
-        mClientEntityMultimap = new TreeMap<>();
+        clientEntityMultimap = new TreeMap<>();
         for (ClientWithAccounts cA : clientAccounts) {
-            mClientEntityMultimap.put(cA.client, cA.accounts);
+            clientEntityMultimap.put(cA.client, cA.accounts);
         }
         setupToClientSpinner();
     }
 
     private void setupFromAccSpinner() {
-        mSpinnerFromAccount = findViewById(R.id.spinner_from);
-        mAdapterFromAccount = new ListAdapter<>(this, R.layout.row_client, new ArrayList<>());
-        mSpinnerFromAccount.setAdapter(mAdapterFromAccount);
+        spinnerFromAccount = findViewById(R.id.spinner_from);
+        adapterFromAccount = new ListAdapter<>(this, R.layout.row_client, new ArrayList<>());
+        spinnerFromAccount.setAdapter(adapterFromAccount);
     }
 
     private void setupToClientSpinner() {
         Spinner spinnerToClient = findViewById(R.id.spinner_toClient);
         ListAdapter<ClientEntity> adapterToClient = new ListAdapter<>(this, R.layout.row_client,
-                new ArrayList<>(mClientEntityMultimap.keySet())
+                new ArrayList<>(clientEntityMultimap.keySet())
         );
         spinnerToClient.setAdapter(adapterToClient);
         spinnerToClient.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -130,17 +132,17 @@ public class TransactionActivity extends BaseActivity {
     }
 
     private void setupToAccSpinner() {
-        mSpinnerToAccount = findViewById(R.id.spinner_toAcc);
-        mAdapterToAccount = new ListAdapter<>(this, R.layout.row_client, new ArrayList<>());
-        mSpinnerToAccount.setAdapter(mAdapterToAccount);
+        spinnerToAccount = findViewById(R.id.spinner_toAcc);
+        adapterToAccount = new ListAdapter<>(this, R.layout.row_client, new ArrayList<>());
+        spinnerToAccount.setAdapter(adapterToAccount);
     }
 
     private void updateToAccSpinner(ClientEntity client) {
-        mAdapterToAccount.updateData(mClientEntityMultimap.get(client));
+        adapterToAccount.updateData(clientEntityMultimap.get(client));
     }
 
     private void updateFromAccSpinner(List<AccountEntity> accounts) {
-        mAdapterFromAccount.updateData(new ArrayList<>(accounts));
+        adapterFromAccount.updateData(new ArrayList<>(accounts));
     }
 
     private boolean executeTransaction() {
@@ -155,8 +157,8 @@ public class TransactionActivity extends BaseActivity {
             return false;
         }
 
-        AccountEntity fromAccount = (AccountEntity) mSpinnerFromAccount.getSelectedItem();
-        AccountEntity toAccount = (AccountEntity) mSpinnerToAccount.getSelectedItem();
+        AccountEntity fromAccount = (AccountEntity) spinnerFromAccount.getSelectedItem();
+        AccountEntity toAccount = (AccountEntity) spinnerToAccount.getSelectedItem();
         if (fromAccount != null && toAccount != null) {
             if (amount <= 0.0d) {
                 amountEditText.setError(getString(R.string.error_transaction_negativ));
@@ -170,7 +172,17 @@ public class TransactionActivity extends BaseActivity {
             }
             fromAccount.setBalance(fromAccount.getBalance() - amount);
             toAccount.setBalance(toAccount.getBalance() + amount);
-            mViewModel.executeTransaction(fromAccount, toAccount);
+            viewModel.executeTransaction(fromAccount, toAccount, new OnAsyncEventListener() {
+                @Override
+                public void onSuccess() {
+                    Log.d(TAG, "transaction: success");
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.d(TAG, "transaction: failure", e);
+                }
+            });
         } else {
             Toast.makeText(this, getString(R.string.transaction_no_selection), Toast.LENGTH_LONG).show();
             return false;

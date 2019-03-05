@@ -20,19 +20,20 @@ public class ClientAccountsListLiveData extends LiveData<List<ClientWithAccounts
 
     private static final String TAG = "ClientAccountsLiveData";
 
-    private final DatabaseReference mReference;
-    private final String mOwner;
-    private final ClientAccountsListLiveData.MyValueEventListener mListener = new ClientAccountsListLiveData.MyValueEventListener();
+    private final DatabaseReference reference;
+    private final String owner;
+    private final ClientAccountsListLiveData.MyValueEventListener listener =
+            new ClientAccountsListLiveData.MyValueEventListener();
 
     public ClientAccountsListLiveData(DatabaseReference ref, String owner) {
-        mReference = ref;
-        mOwner = owner;
+        reference = ref;
+        this.owner = owner;
     }
 
     @Override
     protected void onActive() {
         Log.d(TAG, "onActive");
-        mReference.addValueEventListener(mListener);
+        reference.addValueEventListener(listener);
     }
 
     @Override
@@ -48,18 +49,19 @@ public class ClientAccountsListLiveData extends LiveData<List<ClientWithAccounts
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.e(TAG, "Can't listen to query " + mReference, databaseError.toException());
+            Log.e(TAG, "Can't listen to query " + reference, databaseError.toException());
         }
     }
 
     private List<ClientWithAccounts> toClientWithAccountsList(DataSnapshot snapshot) {
         List<ClientWithAccounts> clientWithAccountsList = new ArrayList<>();
         for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-            if (!childSnapshot.getKey().equals(mOwner)) {
+            if (!childSnapshot.getKey().equals(owner)) {
                 ClientWithAccounts clientWithAccounts = new ClientWithAccounts();
                 clientWithAccounts.client = childSnapshot.getValue(ClientEntity.class);
                 clientWithAccounts.client.setId(childSnapshot.getKey());
-                clientWithAccounts.accounts = toAccounts(childSnapshot.child("accounts"), childSnapshot.getKey());
+                clientWithAccounts.accounts = toAccounts(childSnapshot.child("accounts"),
+                        childSnapshot.getKey());
                 clientWithAccountsList.add(clientWithAccounts);
             }
         }

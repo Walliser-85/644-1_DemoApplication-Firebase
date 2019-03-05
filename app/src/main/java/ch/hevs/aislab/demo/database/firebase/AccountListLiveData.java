@@ -18,19 +18,19 @@ public class AccountListLiveData extends LiveData<List<AccountEntity>> {
 
     private static final String TAG = "AccountListLiveData";
 
-    private final DatabaseReference mReference;
-    private final String mOwner;
-    private final MyValueEventListener mListener = new MyValueEventListener();
+    private final DatabaseReference reference;
+    private final String owner;
+    private final MyValueEventListener listener = new MyValueEventListener();
 
     public AccountListLiveData(DatabaseReference ref, String owner) {
-        mReference = ref;
-        mOwner = owner;
+        reference = ref;
+        this.owner = owner;
     }
 
     @Override
     protected void onActive() {
         Log.d(TAG, "onActive");
-        mReference.addValueEventListener(mListener);
+        reference.addValueEventListener(listener);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AccountListLiveData extends LiveData<List<AccountEntity>> {
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.e(TAG, "Can't listen to query " + mReference, databaseError.toException());
+            Log.e(TAG, "Can't listen to query " + reference, databaseError.toException());
         }
     }
 
@@ -55,7 +55,7 @@ public class AccountListLiveData extends LiveData<List<AccountEntity>> {
         for (DataSnapshot childSnapshot : snapshot.getChildren()) {
             AccountEntity entity = childSnapshot.getValue(AccountEntity.class);
             entity.setId(childSnapshot.getKey());
-            entity.setOwner(mOwner);
+            entity.setOwner(owner);
             accounts.add(entity);
         }
         return accounts;

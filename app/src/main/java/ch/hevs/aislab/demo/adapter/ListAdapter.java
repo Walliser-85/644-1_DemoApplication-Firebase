@@ -16,13 +16,13 @@ import ch.hevs.aislab.demo.R;
 
 public class ListAdapter<T> extends ArrayAdapter<T> {
 
-    private int mResource;
-    private List<T> mData;
+    private int resource;
+    private List<T> data;
 
     public ListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<T> data) {
         super(context, resource, data);
-        mResource = resource;
-        mData = data;
+        this.resource = resource;
+        this.data = data;
     }
 
     @NonNull
@@ -37,7 +37,7 @@ public class ListAdapter<T> extends ArrayAdapter<T> {
     }
 
     public T getItem(int position) {
-        return mData.get(position);
+        return data.get(position);
     }
 
     private View getCustomView(int position, View convertView, ViewGroup parent) {
@@ -45,7 +45,7 @@ public class ListAdapter<T> extends ArrayAdapter<T> {
 
         if (convertView == null) {
             convertView = LayoutInflater.from(this.getContext())
-                    .inflate(mResource, parent, false);
+                    .inflate(resource, parent, false);
 
             viewHolder = new ListAdapter.ViewHolder();
             viewHolder.itemView = convertView.findViewById(R.id.tvClientView);
@@ -66,9 +66,9 @@ public class ListAdapter<T> extends ArrayAdapter<T> {
     }
 
     public void updateData(List<T> data) {
-        mData.clear();
-        mData.addAll(data);
-        //mData = data;
+        this.data.clear();
+        this.data.addAll(data);
+        //data = data;
         notifyDataSetChanged();
     }
 }

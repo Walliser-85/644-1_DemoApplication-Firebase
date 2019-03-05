@@ -12,21 +12,22 @@ import com.google.firebase.database.ValueEventListener;
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
 
 public class AccountLiveData extends LiveData<AccountEntity> {
+
     private static final String TAG = "AccountLiveData";
 
-    private final DatabaseReference mReference;
-    private final String mOwner;
-    private final AccountLiveData.MyValueEventListener mListener = new AccountLiveData.MyValueEventListener();
+    private final DatabaseReference reference;
+    private final String owner;
+    private final AccountLiveData.MyValueEventListener listener = new AccountLiveData.MyValueEventListener();
 
     public AccountLiveData(DatabaseReference ref) {
-        mReference = ref;
-        mOwner = ref.getParent().getParent().getKey();
+        reference = ref;
+        owner = ref.getParent().getParent().getKey();
     }
 
     @Override
     protected void onActive() {
         Log.d(TAG, "onActive");
-        mReference.addValueEventListener(mListener);
+        reference.addValueEventListener(listener);
     }
 
     @Override
@@ -39,13 +40,13 @@ public class AccountLiveData extends LiveData<AccountEntity> {
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             AccountEntity entity = dataSnapshot.getValue(AccountEntity.class);
             entity.setId(dataSnapshot.getKey());
-            entity.setOwner(mOwner);
+            entity.setOwner(owner);
             setValue(entity);
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.e(TAG, "Can't listen to query " + mReference, databaseError.toException());
+            Log.e(TAG, "Can't listen to query " + reference, databaseError.toException());
         }
     }
 }

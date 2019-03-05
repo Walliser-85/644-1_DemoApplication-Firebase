@@ -2,7 +2,6 @@ package ch.hevs.aislab.demo.database.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -17,21 +16,21 @@ import java.util.List;
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.database.firebase.AccountListLiveData;
 import ch.hevs.aislab.demo.database.firebase.AccountLiveData;
+import ch.hevs.aislab.demo.util.OnAsyncEventListener;
 
 public class AccountRepository {
-    private static final String TAG = "AccountRepository";
 
-    private static AccountRepository sInstance;
+    private static AccountRepository instance;
 
     public static AccountRepository getInstance() {
-        if (sInstance == null) {
+        if (instance == null) {
             synchronized (AccountRepository.class) {
-                if (sInstance == null) {
-                    sInstance = new AccountRepository();
+                if (instance == null) {
+                    instance = new AccountRepository();
                 }
             }
         }
-        return sInstance;
+        return instance;
     }
 
     public LiveData<AccountEntity> getAccount(final String accountId) {
@@ -51,7 +50,7 @@ public class AccountRepository {
         return new AccountListLiveData(reference, owner);
     }
 
-    public void insert(final AccountEntity account) {
+    public void insert(final AccountEntity account, final OnAsyncEventListener callback) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("clients")
                 .child(account.getOwner())
@@ -64,14 +63,14 @@ public class AccountRepository {
                 .child(key)
                 .setValue(account, (databaseError, databaseReference) -> {
                     if (databaseError != null) {
-                        Log.d(TAG, "Insert failure!", databaseError.toException());
+                        callback.onFailure(databaseError.toException());
                     } else {
-                        Log.i(TAG, "Insert successful!");
+                        callback.onSuccess();
                     }
                 });
     }
 
-    public void update(final AccountEntity account) {
+    public void update(final AccountEntity account, OnAsyncEventListener callback) {
         FirebaseDatabase.getInstance()
                 .getReference("clients")
                 .child(account.getOwner())
@@ -79,14 +78,14 @@ public class AccountRepository {
                 .child(account.getId())
                 .updateChildren(account.toMap(), (databaseError, databaseReference) -> {
                     if (databaseError != null) {
-                        Log.d(TAG, "Update failure!", databaseError.toException());
+                        callback.onFailure(databaseError.toException());
                     } else {
-                        Log.d(TAG, "Update successful!");
+                        callback.onSuccess();
                     }
                 });
     }
 
-    public void delete(final AccountEntity account) {
+    public void delete(final AccountEntity account, OnAsyncEventListener callback) {
         FirebaseDatabase.getInstance()
                 .getReference("clients")
                 .child(account.getOwner())
@@ -94,14 +93,15 @@ public class AccountRepository {
                 .child(account.getId())
                 .removeValue((databaseError, databaseReference) -> {
                     if (databaseError != null) {
-                        Log.d(TAG, "Delete failure!", databaseError.toException());
+                        callback.onFailure(databaseError.toException());
                     } else {
-                        Log.d(TAG, "Delete successful!");
+                        callback.onSuccess();
                     }
                 });
     }
 
-    public void transaction(final AccountEntity sender, final AccountEntity recipient) {
+    public void transaction(final AccountEntity sender, final AccountEntity recipient,
+                            OnAsyncEventListener callback) {
         final DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
         rootReference.runTransaction(new Transaction.Handler() {
             @NonNull
@@ -125,11 +125,12 @@ public class AccountRepository {
             }
 
             @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
                 if (databaseError != null) {
-                    Log.d(TAG, "Transaction failure!", databaseError.toException());
+                    callback.onFailure(databaseError.toException());
                 } else {
-                    Log.d(TAG, "Transaction successful!");
+                    callback.onSuccess();
                 }
             }
         });

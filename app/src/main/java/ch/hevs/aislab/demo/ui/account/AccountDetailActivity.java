@@ -20,18 +20,20 @@ import java.text.NumberFormat;
 import ch.hevs.aislab.demo.R;
 import ch.hevs.aislab.demo.database.entity.AccountEntity;
 import ch.hevs.aislab.demo.ui.BaseActivity;
+import ch.hevs.aislab.demo.util.OnAsyncEventListener;
 import ch.hevs.aislab.demo.viewmodel.account.AccountViewModel;
 
 public class AccountDetailActivity extends BaseActivity {
 
     private static final String TAG = "AccountDetailActivity";
+
     private static final int EDIT_ACCOUNT = 1;
 
-    private AccountEntity mAccount;
-    private TextView mTvBalance;
-    private NumberFormat mDefaultFormat;
+    private AccountEntity account;
+    private TextView tvBalance;
+    private NumberFormat defaultFormat;
 
-    private AccountViewModel mViewModel;
+    private AccountViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +46,10 @@ public class AccountDetailActivity extends BaseActivity {
 
         AccountViewModel.Factory factory = new AccountViewModel.Factory(
                 getApplication(), accountId);
-        mViewModel = ViewModelProviders.of(this, factory).get(AccountViewModel.class);
-        mViewModel.getAccount().observe(this, accountEntity -> {
+        viewModel = ViewModelProviders.of(this, factory).get(AccountViewModel.class);
+        viewModel.getAccount().observe(this, accountEntity -> {
             if (accountEntity != null) {
-                mAccount = accountEntity;
+                account = accountEntity;
                 updateContent();
             }
         });
@@ -66,15 +68,15 @@ public class AccountDetailActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == EDIT_ACCOUNT) {
             Intent intent = new Intent(this, EditAccountActivity.class);
-            intent.putExtra("accountId", mAccount.getId());
+            intent.putExtra("accountId", account.getId());
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void initiateView() {
-        mTvBalance = findViewById(R.id.accBalance);
-        mDefaultFormat = NumberFormat.getCurrencyInstance();
+        tvBalance = findViewById(R.id.accBalance);
+        defaultFormat = NumberFormat.getCurrencyInstance();
 
         Button depositBtn = findViewById(R.id.depositButton);
         depositBtn.setOnClickListener(view -> generateDialog(R.string.action_deposit));
@@ -84,9 +86,9 @@ public class AccountDetailActivity extends BaseActivity {
     }
 
     private void updateContent() {
-        if (mAccount != null) {
-            setTitle(mAccount.getName());
-            mTvBalance.setText(mDefaultFormat.format(mAccount.getBalance()));
+        if (account != null) {
+            setTitle(account.getName());
+            tvBalance.setText(defaultFormat.format(account.getBalance()));
             Log.i(TAG, "Activity populated.");
         }
     }
@@ -108,18 +110,28 @@ public class AccountDetailActivity extends BaseActivity {
                 Toast toast = Toast.makeText(AccountDetailActivity.this, getString(R.string.error_withdraw), Toast.LENGTH_LONG);
 
                 if (action == R.string.action_withdraw) {
-                    if (mAccount.getBalance() < amount) {
+                    if (account.getBalance() < amount) {
                         toast.show();
                         return;
                     }
                     Log.i(TAG, "Withdrawal: " + amount.toString());
-                    mAccount.setBalance(mAccount.getBalance() - amount);
+                    account.setBalance(account.getBalance() - amount);
                 }
                 if (action == R.string.action_deposit) {
                     Log.i(TAG, "Deposit: " + amount.toString());
-                    mAccount.setBalance(mAccount.getBalance() + amount);
+                    account.setBalance(account.getBalance() + amount);
                 }
-                mViewModel.updateAccount(mAccount);
+                viewModel.updateAccount(account, new OnAsyncEventListener() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d(TAG, "updateAccount: success");
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.d(TAG, "updateAccount: failure", e);
+                    }
+                });
             }
         });
 

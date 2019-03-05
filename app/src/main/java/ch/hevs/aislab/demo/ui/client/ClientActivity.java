@@ -30,19 +30,19 @@ public class ClientActivity extends BaseActivity {
     private static final int EDIT_CLIENT = 1;
     private static final int DELETE_CLIENT = 2;
 
-    private Toast mToast;
+    private Toast toast;
 
-    private boolean mEditable;
+    private boolean isEditable;
 
-    private EditText mEtFirstName;
-    private EditText mEtLastName;
-    private EditText mEtEmail;
-    private EditText mEtPwd1;
-    private EditText mEtPwd2;
+    private EditText etFirstName;
+    private EditText etLastName;
+    private EditText etEmail;
+    private EditText etPwd1;
+    private EditText etPwd2;
 
-    private ClientViewModel mViewModel;
+    private ClientViewModel viewModel;
 
-    private ClientEntity mClient;
+    private ClientEntity client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +59,10 @@ public class ClientActivity extends BaseActivity {
                 getApplication(),
                 FirebaseAuth.getInstance().getCurrentUser().getUid()
         );
-        mViewModel = ViewModelProviders.of(this, factory).get(ClientViewModel.class);
-        mViewModel.getClient().observe(this, accountEntity -> {
+        viewModel = ViewModelProviders.of(this, factory).get(ClientViewModel.class);
+        viewModel.getClient().observe(this, accountEntity -> {
             if (accountEntity != null) {
-                mClient = accountEntity;
+                client = accountEntity;
                 updateContent();
             }
         });
@@ -96,7 +96,7 @@ public class ClientActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == EDIT_CLIENT) {
-            if (mEditable) {
+            if (isEditable) {
                 item.setIcon(R.drawable.ic_edit_white_24dp);
                 switchEditableMode();
             } else {
@@ -110,7 +110,7 @@ public class ClientActivity extends BaseActivity {
             alertDialog.setCancelable(false);
             alertDialog.setMessage(getString(R.string.delete_msg));
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.action_delete), (dialog, which) -> {
-                mViewModel.deleteClient(mClient, new OnAsyncEventListener() {
+                viewModel.deleteClient(client, new OnAsyncEventListener() {
                             @Override
                             public void onSuccess() {
                                 Log.d(TAG, "deleteUser: success");
@@ -130,74 +130,76 @@ public class ClientActivity extends BaseActivity {
     }
 
     private void initiateView() {
-        mEditable = false;
-        mEtFirstName = findViewById(R.id.firstName);
-        mEtLastName = findViewById(R.id.lastName);
-        mEtEmail = findViewById(R.id.email);
-        mEtPwd1 = findViewById(R.id.password);
-        mEtPwd2 = findViewById(R.id.passwordRep);
+        isEditable = false;
+        etFirstName = findViewById(R.id.firstName);
+        etLastName = findViewById(R.id.lastName);
+        etEmail = findViewById(R.id.email);
+        etPwd1 = findViewById(R.id.password);
+        etPwd2 = findViewById(R.id.passwordRep);
     }
 
     private void switchEditableMode() {
-        if (!mEditable) {
+        if (!isEditable) {
             LinearLayout linearLayout = findViewById(R.id.clientPasswordLayout);
             linearLayout.setVisibility(View.VISIBLE);
-            mEtFirstName.setFocusable(true);
-            mEtFirstName.setEnabled(true);
-            mEtFirstName.requestFocus();
-            mEtLastName.setFocusable(true);
-            mEtLastName.setEnabled(true);
+            etFirstName.setFocusable(true);
+            etFirstName.setEnabled(true);
+            etFirstName.requestFocus();
+            etLastName.setFocusable(true);
+            etLastName.setEnabled(true);
         } else {
             saveChanges(
-                    mEtFirstName.getText().toString(),
-                    mEtLastName.getText().toString(),
-                    mEtEmail.getText().toString(),
-                    mEtPwd1.getText().toString(),
-                    mEtPwd2.getText().toString()
+                    etFirstName.getText().toString(),
+                    etLastName.getText().toString(),
+                    etEmail.getText().toString(),
+                    etPwd1.getText().toString(),
+                    etPwd2.getText().toString()
             );
             LinearLayout linearLayout = findViewById(R.id.clientPasswordLayout);
             linearLayout.setVisibility(View.GONE);
-            mEtFirstName.setFocusable(false);
-            mEtFirstName.setEnabled(false);
-            mEtLastName.setFocusable(false);
-            mEtLastName.setEnabled(false);
+            etFirstName.setFocusable(false);
+            etFirstName.setEnabled(false);
+            etLastName.setFocusable(false);
+            etLastName.setEnabled(false);
         }
-        mEditable = !mEditable;
+        isEditable = !isEditable;
     }
 
     private void updateContent() {
-        if (mClient != null) {
-            mEtFirstName.setText(mClient.getFirstName());
-            mEtLastName.setText(mClient.getLastName());
-            mEtEmail.setText(mClient.getEmail());
-            mEtPwd1.setText("");
-            mEtPwd2.setText("");
+        if (client != null) {
+            etFirstName.setText(client.getFirstName());
+            etLastName.setText(client.getLastName());
+            etEmail.setText(client.getEmail());
+            etPwd1.setText("");
+            etPwd2.setText("");
         }
     }
 
     private void saveChanges(String firstName, String lastName, String email, String pwd, String pwd2) {
         if (!pwd.equals(pwd2) || pwd.length() < 5) {
-            mToast = Toast.makeText(this, getString(R.string.error_edit_invalid_password), Toast.LENGTH_LONG);
-            mToast.show();
+            toast = Toast.makeText(this, getString(R.string.error_edit_invalid_password), Toast.LENGTH_LONG);
+            toast.show();
             return;
         }
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mEtEmail.setError(getString(R.string.error_invalid_email));
-            mEtEmail.requestFocus();
+            etEmail.setError(getString(R.string.error_invalid_email));
+            etEmail.requestFocus();
             return;
         }
-        mClient.setFirstName(firstName);
-        mClient.setLastName(lastName);
-        mClient.setPassword(pwd);
+        client.setFirstName(firstName);
+        client.setLastName(lastName);
+        client.setPassword(pwd);
 
-        mViewModel.updateClient(mClient, new OnAsyncEventListener() {
+        viewModel.updateClient(client, new OnAsyncEventListener() {
                     @Override
                     public void onSuccess() {
+                        Log.d(TAG, "update: success");
                         setResponse(true);
                     }
 
                     @Override
                     public void onFailure(Exception e) {
+                        Log.d(TAG, "update: failure", e);
                         setResponse(false);
                     }
                 });
@@ -206,11 +208,11 @@ public class ClientActivity extends BaseActivity {
     private void setResponse(Boolean response) {
         if (response) {
             updateContent();
-            mToast = Toast.makeText(this, getString(R.string.client_edited), Toast.LENGTH_LONG);
-            mToast.show();
+            toast = Toast.makeText(this, getString(R.string.client_edited), Toast.LENGTH_LONG);
+            toast.show();
         } else {
-            mEtEmail.setError(getString(R.string.error_used_email));
-            mEtEmail.requestFocus();
+            etEmail.setError(getString(R.string.error_used_email));
+            etEmail.requestFocus();
         }
     }
 
