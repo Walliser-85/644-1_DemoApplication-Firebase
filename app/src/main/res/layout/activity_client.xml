@@ -18,7 +18,7 @@
         android:orientation="vertical"
         tools:context="ch.hevs.aislab.demo.ui.client.ClientActivity">
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -31,7 +31,7 @@
                 android:inputType="textEmailAddress"
                 android:focusable="false"
                 android:enabled="false" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <View
             android:id="@+id/view"
@@ -41,7 +41,7 @@
             android:layout_marginTop="12dp"
             android:background="@android:color/darker_gray" />
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -54,9 +54,9 @@
                 android:inputType="textPersonName"
                 android:focusable="false"
                 android:enabled="false" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -69,7 +69,7 @@
                 android:inputType="textPersonName"
                 android:focusable="false"
                 android:enabled="false" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -87,7 +87,7 @@
                 android:layout_marginTop="12dp"
                 android:background="@android:color/darker_gray" />
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -98,9 +98,9 @@
                     android:ems="10"
                     android:hint="@string/prompt_password"
                     android:inputType="textPassword" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -111,7 +111,7 @@
                     android:ems="10"
                     android:hint="@string/client_repeat_password"
                     android:inputType="textPassword"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

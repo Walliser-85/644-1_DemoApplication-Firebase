@@ -1,8 +1,8 @@
 package ch.hevs.aislab.demo.ui;
 
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.app.AlertDialog;
+import androidx.core.view.GravityCompat;
+import androidx.appcompat.app.AlertDialog;
 
 import ch.hevs.aislab.demo.R;
 

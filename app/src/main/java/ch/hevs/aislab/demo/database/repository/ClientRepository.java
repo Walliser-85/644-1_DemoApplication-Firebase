@@ -1,6 +1,6 @@
 package ch.hevs.aislab.demo.database.repository;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
